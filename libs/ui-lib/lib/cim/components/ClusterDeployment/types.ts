@@ -85,7 +85,6 @@ export type ScaleUpFormValues = Omit<
 
 export type ClusterDeploymentDetailsStepProps = ClusterDeploymentDetailsProps & {
   onSaveDetails: (values: ClusterDeploymentDetailsValues) => Promise<unknown>;
-  onClose: () => void;
   isPreviewOpen: boolean;
   isNutanix: boolean;
 };
@@ -98,7 +97,6 @@ export type ClusterDeploymentDetailsNetworkingProps = Pick<
   agentClusterInstall: AgentClusterInstallK8sResource;
   agents: AgentK8sResource[];
   onSaveNetworking: (values: ClusterDeploymentNetworkingValues) => Promise<string | void>;
-  onClose: () => void;
   fetchInfraEnv: (name: string, namespace: string) => Promise<InfraEnvK8sResource>;
   isPreviewOpen: boolean;
   isNutanix: boolean;
@@ -115,7 +113,6 @@ export type ClusterDeploymentHostSelectionStepProps = Omit<
   'onHostSelect' | 'onAutoSelectChange'
 > & {
   onSaveHostsSelection: (values: ClusterDeploymentHostsSelectionValues) => Promise<string | void>;
-  onClose: () => void;
 };
 
 export type ClusterDeploymentHostsDiscoveryStepProps = Omit<
@@ -123,7 +120,6 @@ export type ClusterDeploymentHostsDiscoveryStepProps = Omit<
   'usedHostnames'
 > & {
   onSaveHostsDiscovery: () => Promise<void>;
-  onClose: () => void;
 };
 
 export type ClusterDeploymentWizardProps = {
