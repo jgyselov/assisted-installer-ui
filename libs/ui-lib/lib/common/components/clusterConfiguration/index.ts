@@ -5,6 +5,7 @@ export { default as DownloadIso } from './DownloadIso';
 export { default as DiscoveryInstructions } from './DiscoveryInstructions';
 export { default as FormatDiskWarning } from './FormatDiskWarning';
 export { default as SecurityFields } from './SecurityFields';
+export { default as ExternalPlatformsDropdown } from './ExternalPlatformsDropdown';
 
 export * from './utils';
 export * from './DiscoveryTroubleshootingModal';
