@@ -13,6 +13,7 @@ import { ClusterDeploymentHostSelectionStep } from './hostSelection';
 import { ClusterDeploymentHostsDiscoveryStep } from './hostDiscovery';
 import { ClusterDeploymentNetworkingStep } from './networking';
 import { ClusterDeploymentReviewStep } from './review';
+import { ClusterDeploymentCustomManifestsStep } from "./customManifests";
 
 export const ClusterDeploymentWizard = ({
   className,
@@ -90,6 +91,11 @@ export const ClusterDeploymentWizard = ({
                   />
                 </WizardStep>
                 <WizardStep name={stepNames['automation']} id={'automation'} isDisabled />
+
+                <WizardStep name={stepNames['custom-manifests']} id={'custom-manifests'}>
+                  <ClusterDeploymentCustomManifestsStep/>
+                </WizardStep>
+
                 {isCIMFlow(clusterDeployment) ? (
                   <WizardStep name={stepNames['hosts-selection']} id={'host-selection'}>
                     {agentClusterInstall?.metadata?.name ? (
@@ -145,8 +151,6 @@ export const ClusterDeploymentWizard = ({
                     isNutanix={isNutanix}
                   />
                 </WizardStep>
-
-                {/** TODO: Add the custom manifest step here */}
 
                 <WizardStep name={stepNames['review']} id={'review'}>
                   <ClusterDeploymentReviewStep

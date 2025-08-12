@@ -10,7 +10,11 @@ export const clusterHostsSelectionLabel = (t: TFunction): { [key in string]: str
 export const wizardStepNames = (
   t: TFunction,
 ): {
-  [key in ClusterDeploymentWizardStepsType | 'installation-type' | 'automation']: string;
+  [key in
+    | ClusterDeploymentWizardStepsType
+    | 'installation-type'
+    | 'automation'
+    | 'custom-manifests']: string;
 } => ({
   'installation-type': t('ai:Installation type'),
   automation: t('ai:Automation'),
@@ -18,6 +22,7 @@ export const wizardStepNames = (
   'hosts-selection': t('ai:Cluster hosts'),
   'hosts-discovery': t('ai:Cluster hosts'),
   networking: t('ai:Networking'),
+  'custom-manifests': t('ai:Custom manifests'),
   review: t('ai:Review and create'),
 });
 
