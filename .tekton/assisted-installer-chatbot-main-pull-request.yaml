@@ -19,16 +19,11 @@ metadata:
   namespace: assisted-installer-tenant
 spec:
   params:
-  - name: git-url
-    value: '{{source_url}}'
-  - name: revision
-    value: '{{revision}}'
-  - name: output-image
-    value: quay.io/redhat-user-workloads/assisted-installer-tenant/assisted-installer-chatbot-main:on-pr-{{revision}}
-  - name: image-expires-after
-    value: 5d
-  - name: dockerfile
-    value: /build-tools/Dockerfile
+    - name: build-args
+      value:
+        - PACKAGE_JSON_PATH=apps/assisted-chatbot/package.json
+        - 'APP_YARN_BUILD_SCRIPT=workspace @openshift-assisted/chatbot build'
+        - APP_BUILD_DIR=apps/assisted-chatbot/dist
   pipelineSpec:
     description: |
       This pipeline is ideal for building container images from a Containerfile while reducing network traffic.
