@@ -100,9 +100,6 @@ export const getClusterWizardFirstStep = (
     case 'pending-for-input':
     case 'adding-hosts':
     case 'insufficient':
-      if (customManifestsStepNeedsToBeFilled) {
-        return 'custom-manifests';
-      }
       return getStepForFailingHostValidations(hosts);
     default:
       return 'cluster-details';
@@ -250,6 +247,19 @@ const networkingStepValidationsMap: WizardStepValidationMap = {
   ],
 };
 
+const customManifestsValidationsMap: WizardStepValidationMap = {
+  cluster: {
+    groups: ['network'],
+    validationIds: [],
+  },
+  host: {
+    allowedStatuses: ['known', 'disabled'],
+    groups: ['network'],
+    validationIds: [],
+  },
+  softValidationIds: ['ntp-synced', 'container-images-available', 'mtu-valid'],
+};
+
 const reviewStepValidationsMap: WizardStepValidationMap = {
   cluster: {
     groups: [],
@@ -264,8 +274,6 @@ const reviewStepValidationsMap: WizardStepValidationMap = {
 };
 
 const credentialsValidationMap = buildEmptyValidationsMap();
-
-const customManifestsValidationsMap = buildEmptyValidationsMap();
 const disconnectedReviewValidationsMap = buildEmptyValidationsMap();
 const disconnectedBasicValidationsMap = buildEmptyValidationsMap();
 
