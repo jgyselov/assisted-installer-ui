@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useFormikContext } from 'formik';
 import { Content, ExpandableSection, Stack, StackItem } from '@patternfly/react-core';
 import {
   Bundle,
   Cluster,
   PreflightHardwareRequirements,
 } from '@openshift-assisted/types/assisted-installer-service';
-import { useFormikContext } from 'formik';
 import {
   getApiErrorMessage,
   handleApiError,
@@ -14,13 +14,13 @@ import {
   singleClusterOperators,
   useAlerts,
   useStateSafely,
-} from '../../../common';
-import { OperatorsService } from '../../services';
-import { useFeature } from '../../hooks/use-feature';
-import OperatorCheckbox from '../clusterConfiguration/operators/OperatorCheckbox';
-import { useOperatorSpecs } from '../../../common/components/operators/operatorSpecs';
+  useOperatorSpecs,
+} from '../../../../../common';
+import { OperatorsService } from '../../../../services';
+import { useFeature } from '../../../../hooks/use-feature';
+import { OperatorCheckbox } from './fields';
 
-const OperatorsSelect = ({
+export const OperatorsSelect = ({
   cluster,
   bundles,
   preflightRequirements,
@@ -37,6 +37,7 @@ const OperatorsSelect = ({
   const [supportedOperators, setSupportedOperators] = useStateSafely<string[]>([]);
   const isSingleClusterFeatureEnabled = useFeature('ASSISTED_INSTALLER_SINGLE_CLUSTER_FEATURE');
   const { values } = useFormikContext<OperatorsValues>();
+
   React.useEffect(() => {
     const fetchSupportedOperators = async () => {
       try {
@@ -73,6 +74,7 @@ const OperatorsSelect = ({
     return <LoadingState />;
   }
   let foundAtLeastOneOperator = false;
+
   return (
     <>
       <ExpandableSection
@@ -130,5 +132,3 @@ const OperatorsSelect = ({
     </>
   );
 };
-
-export default OperatorsSelect;

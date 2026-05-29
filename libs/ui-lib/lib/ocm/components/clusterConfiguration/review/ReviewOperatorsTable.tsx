@@ -1,9 +1,8 @@
 import React from 'react';
 import { Table, TableVariant, Tbody, Td, Tr } from '@patternfly/react-table';
-import { genericTableRowKey, selectOlmOperators } from '../../../../common';
 import { Cluster } from '@openshift-assisted/types/assisted-installer-service';
+import { genericTableRowKey, selectOlmOperators, useOperatorSpecs } from '../../../../common';
 import { TableSummaryExpandable } from './TableSummaryExpandable';
-import { useOperatorSpecs } from '../../../../common/components/operators/operatorSpecs';
 
 export const ReviewOperatorsTable = ({ cluster }: { cluster: Cluster }) => {
   const { byKey: opSpecs } = useOperatorSpecs();

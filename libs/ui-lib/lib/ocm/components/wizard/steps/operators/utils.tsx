@@ -2,7 +2,7 @@ import {
   Bundle,
   PreflightHardwareRequirements,
 } from '@openshift-assisted/types/assisted-installer-service';
-import { OperatorSpec } from '../../../../common/components/operators/operatorSpecs';
+import { OperatorSpec } from '../../../../../common';
 
 const getOperatorDependencies = (
   operatorId: string,

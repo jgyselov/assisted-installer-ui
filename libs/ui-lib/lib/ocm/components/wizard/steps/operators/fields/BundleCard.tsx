@@ -1,34 +1,33 @@
-import * as React from 'react';
+import React from 'react';
+import { useFormikContext } from 'formik';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardTitle,
-  Gallery,
-  GalleryItem,
-  List,
-  ListItem,
   Stack,
   StackItem,
-  Title,
+  List,
+  ListItem,
   Tooltip,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardBody,
 } from '@patternfly/react-core';
 import {
   Bundle,
   PreflightHardwareRequirements,
-} from '@openshift-assisted/types/assisted-installer-service';
-import { ExternalLink, OperatorsValues, PopoverIcon, singleClusterBundles } from '../../../common';
-import { useFormikContext } from 'formik';
-import { useNewFeatureSupportLevel } from '../../../common/components/newFeatureSupportLevels';
-import { useFeature } from '../../hooks/use-feature';
-import { getNewBundleOperators } from '../clusterConfiguration/operators/utils';
-import { bundleSpecs } from '../clusterConfiguration/operators/bundleSpecs';
+} from '@openshift-assisted/types/./assisted-installer-service';
 import {
-  highlightMatch,
+  PopoverIcon,
+  ExternalLink,
+  OperatorsValues,
+  useNewFeatureSupportLevel,
   useOperatorSpecs,
-} from '../../../common/components/operators/operatorSpecs';
-import { useClusterWizardContext } from '../wizard/clusterWizardContext/ClusterWizardContext';
-import './OperatorsBundle.css';
+  highlightMatch,
+} from '../../../../../../common';
+import { useClusterWizardContext } from '../../../clusterWizardContext';
+import { getNewBundleOperators } from '../utils';
+import { bundleSpecs } from './bundleSpecs';
+
+import './BundleCard.css';
 
 const BundleLabel = ({ bundle, searchTerm }: { bundle: Bundle; searchTerm?: string }) => {
   const { byKey: opSpecs } = useOperatorSpecs();
@@ -70,7 +69,7 @@ const BundleLabel = ({ bundle, searchTerm }: { bundle: Bundle; searchTerm?: stri
   );
 };
 
-const BundleCard = ({
+export const BundleCard = ({
   bundle,
   bundles,
   preflightRequirements,
@@ -164,46 +163,3 @@ const BundleCard = ({
     </Tooltip>
   );
 };
-
-const OperatorsBundle = ({
-  bundles,
-  allBundles,
-  preflightRequirements,
-  searchTerm,
-}: {
-  bundles: Bundle[];
-  allBundles: Bundle[];
-  preflightRequirements: PreflightHardwareRequirements | undefined;
-  searchTerm?: string;
-}) => {
-  const isSingleClusterFeatureEnabled = useFeature('ASSISTED_INSTALLER_SINGLE_CLUSTER_FEATURE');
-
-  return (
-    <Stack hasGutter>
-      <StackItem>
-        <Title headingLevel="h2" size="lg">
-          {allBundles.length > 0 ? 'Bundles' : ''}
-        </Title>
-      </StackItem>
-      <StackItem>
-        <Gallery hasGutter minWidths={{ default: '350px' }}>
-          {(isSingleClusterFeatureEnabled
-            ? allBundles.filter((b) => b.id && singleClusterBundles.includes(b.id))
-            : allBundles
-          ).map((bundle) => (
-            <GalleryItem key={bundle.id}>
-              <BundleCard
-                bundle={bundles.find((b) => b.id === bundle.id) || bundle}
-                bundles={bundles}
-                preflightRequirements={preflightRequirements}
-                searchTerm={searchTerm}
-              />
-            </GalleryItem>
-          ))}
-        </Gallery>
-      </StackItem>
-    </Stack>
-  );
-};
-
-export default OperatorsBundle;
