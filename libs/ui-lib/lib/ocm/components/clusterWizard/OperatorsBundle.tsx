@@ -27,7 +27,7 @@ import {
   highlightMatch,
   useOperatorSpecs,
 } from '../../../common/components/operators/operatorSpecs';
-import { useClusterWizardContext } from './ClusterWizardContext';
+import { useClusterWizardContext } from '../wizard/clusterWizardContext/ClusterWizardContext';
 import './OperatorsBundle.css';
 
 const BundleLabel = ({ bundle, searchTerm }: { bundle: Bundle; searchTerm?: string }) => {
