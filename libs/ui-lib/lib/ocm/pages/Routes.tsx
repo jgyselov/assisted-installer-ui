@@ -8,14 +8,15 @@ import {
   unstable_HistoryRouter as HistoryRouter,
   HistoryRouterProps,
 } from 'react-router-dom-v5-compat';
-import type { FeatureListType } from '../../common/features/featureGate';
-import { AssistedUILibVersion } from '../components/ui';
+import type { FeatureListType } from '../../common';
+import { AssistedUILibVersion } from '../components';
 import { storeDay1 } from '../store';
-import { useFeatureDetection } from '../hooks/use-feature-detection';
-import './Routes.css';
+import { useFeatureDetection } from '../hooks';
 import { NewClusterPage } from './newClusterPage';
 import { ClusterPage } from './clusterPage';
 import { ClusterListPage } from './clusterListPage';
+
+import './Routes.css';
 
 type UILibRoutesProps = {
   allEnabledFeatures: FeatureListType;
