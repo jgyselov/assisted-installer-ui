@@ -11,7 +11,7 @@ import {
   WizardStepValidationMap,
 } from '../../../../common/components/clusterWizard/validationsInfoUtils';
 import { Day2WizardStepsType } from '../../AddHosts/day2Wizard/constants';
-import { StaticIpInfo, StaticIpView } from '../../clusterConfiguration/staticIp/data/dataTypes';
+import { StaticIpInfo, StaticIpView } from '../steps/staticIp/data';
 import {
   ValidationsInfo as HostValidationsInfo,
   Validation as HostValidation,
