@@ -143,7 +143,7 @@ export const networkingPage = {
     ingressVip = Cypress.env('INGRESS_VIP'),
   ) => {
     const fillField = (element, value) => {
-      element.scrollIntoView().should('be.visible').fill(value).should('have.value', value);
+      element.scrollIntoView().should('be.visible').type(value).should('have.value', value);
     };
     if (apiVip) {
       fillField(networkingPage.getApiVipField(), apiVip);
@@ -157,7 +157,7 @@ export const networkingPage = {
     ingressVip = Cypress.env('INGRESS_VIP'),
   ) => {
     const fillField = (element, value) => {
-      element.scrollIntoView().should('be.visible').fill(value).should('have.value', value);
+      element.scrollIntoView().should('be.visible').type(value).should('have.value', value);
     };
     if (apiVip) {
       fillField(networkingPage.getApiVipFieldSecondary(), apiVip);
@@ -289,10 +289,6 @@ export const networkingPage = {
     cy.get('.pf-v6-c-wizard__nav').click();
   },
   confirmStackTypeChange: () => {
-    cy.get('body').then(($body) => {
-      if ($body.hasClass('pf-v6-c-backdrop__open')) {
-        cy.get(`button[data-testid='confirm-modal-submit']`).click();
-      }
-    });
+    cy.get(`button[data-testid='confirm-modal-submit']`).click();
   },
 };

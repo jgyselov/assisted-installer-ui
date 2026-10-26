@@ -7,17 +7,25 @@ type UseFormikAutoSave = (debounce?: number) => boolean;
 
 export const useFormikAutoSave: UseFormikAutoSave = (debounce = 1000) => {
   const [autoSaveIDs, setAutoSaveIDs] = React.useState<number[]>([]);
-  const { values, isSubmitting, submitForm } = useFormikContext();
+  const { values, isSubmitting, submitForm, isValid } = useFormikContext();
   const prevValuesRef = React.useRef(values);
+  const formStateRef = React.useRef({ isValid });
+  formStateRef.current = { isValid };
+
   const commitRef = React.useRef(
     debouncer(async (autoSaveID: number) => {
-      await submitForm();
+      if (formStateRef.current.isValid) {
+        await submitForm();
+      }
       setAutoSaveIDs((ids) => ids.filter((id) => id > autoSaveID));
     }, debounce),
   );
 
   React.useEffect(() => {
-    if (!shallowEqual(prevValuesRef.current, values) && !isSubmitting) {
+    if (
+      (!shallowEqual(prevValuesRef.current, values) || formStateRef.current.isValid !== isValid) &&
+      !isSubmitting
+    ) {
       const autoSaveID = Date.now();
       setAutoSaveIDs((ids) => {
         ids.push(autoSaveID);
@@ -28,7 +36,7 @@ export const useFormikAutoSave: UseFormikAutoSave = (debounce = 1000) => {
     if (!isSubmitting) {
       prevValuesRef.current = values;
     }
-  }, [values, isSubmitting, setAutoSaveIDs]);
+  }, [values, isSubmitting, setAutoSaveIDs, isValid]);
 
   React.useEffect(() => {
     const commit = commitRef.current;
@@ -39,9 +47,19 @@ export const useFormikAutoSave: UseFormikAutoSave = (debounce = 1000) => {
 };
 
 const FormikAutoSave: React.FC<{ debounce?: number }> = ({ debounce = 1000 }) => {
-  const { values, dirty, isSubmitting, submitForm } = useFormikContext();
+  const { values, dirty, isSubmitting, submitForm, isValid } = useFormikContext();
   const prevValuesRef = React.useRef(values);
-  const commitRef = React.useRef(debouncer(submitForm, debounce));
+
+  const formStateRef = React.useRef({ isValid });
+  formStateRef.current = { isValid };
+
+  const commitRef = React.useRef(
+    debouncer(async () => {
+      if (formStateRef.current.isValid) {
+        await submitForm();
+      }
+    }, debounce),
+  );
 
   React.useEffect(() => {
     if (!shallowEqual(prevValuesRef.current, values) && dirty && !isSubmitting) {

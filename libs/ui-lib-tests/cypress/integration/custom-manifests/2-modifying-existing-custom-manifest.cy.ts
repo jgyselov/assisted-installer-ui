@@ -71,7 +71,7 @@ describe(`Assisted Installer Custom manifests step`, () => {
 
     it('Incorrect file name is shown as an error', () => {
       CustomManifestsForm.initManifest(0);
-      CustomManifestsForm.expandedManifest(0).fileName().clear().type('test.txt');
+      CustomManifestsForm.expandedManifest(0).fileName().clear().type('test.txt').blur();
       CustomManifestsForm.expandedManifest(0)
         .fileNameError()
         .should(
@@ -95,7 +95,7 @@ describe(`Assisted Installer Custom manifests step`, () => {
 
     it('Testing that incorrect patch name for manifests is not allowed', () => {
       CustomManifestsForm.initManifest(0);
-      CustomManifestsForm.expandedManifest(0).fileName().clear().type('test.yaml.patch.aaa');
+      CustomManifestsForm.expandedManifest(0).fileName().clear().type('test.yaml.patch.aaa').blur();
       CustomManifestsForm.expandedManifest(0)
         .fileNameError()
         .should(

@@ -84,14 +84,14 @@ describe(`Assisted Installer Custom manifests step`, () => {
     it('Enforces unique file names for custom manifests', () => {
       CustomManifestsForm.addManifest().click();
       CustomManifestsForm.initManifest(1);
-      CustomManifestsForm.expandedManifest(1).fileName().type('manifest2.yaml');
+      CustomManifestsForm.expandedManifest(1).fileName().type('manifest2.yaml').blur();
       CustomManifestsForm.expandedManifest(1)
         .fileUpload()
         .attachFile(`custom-manifests/files/manifest1.yaml`);
 
       CustomManifestsForm.addManifest().click();
       CustomManifestsForm.initManifest(2);
-      CustomManifestsForm.expandedManifest(2).fileName().type('manifest2.yaml');
+      CustomManifestsForm.expandedManifest(2).fileName().type('manifest2.yaml').blur();
 
       CustomManifestsForm.expandedManifest(2)
         .fileNameError()

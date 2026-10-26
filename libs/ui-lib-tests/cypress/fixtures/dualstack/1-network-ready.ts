@@ -98,8 +98,14 @@ const addNetworkItem = (networkItems, data) => {
 
 const withDualStackNetworks = (singleStackCluster) => ({
   ...singleStackCluster,
-  apiVips: [{ ip: '192.168.122.10', clusterId: fakeClusterId }],
-  ingressVips: [{ ip: '192.168.122.110', clusterId: fakeClusterId }],
+  apiVips: [
+    { ip: '192.168.122.10', clusterId: fakeClusterId },
+    { ip: '1001:db9::10', clusterId: fakeClusterId },
+  ],
+  ingressVips: [
+    { ip: '192.168.122.110', clusterId: fakeClusterId },
+    { ip: '1001:db9::11', clusterId: fakeClusterId },
+  ],
   cluster_networks: addNetworkItem(singleStackCluster.cluster_networks, {
     cidr: 'fd01::/48',
     host_prefix: 64,
