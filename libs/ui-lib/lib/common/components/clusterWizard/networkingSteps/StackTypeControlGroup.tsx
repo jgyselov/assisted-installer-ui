@@ -64,7 +64,7 @@ export const StackTypeControlGroup = ({
   allowSingleStackIPv6 = false,
 }: StackTypeControlGroupProps) => {
   const { t } = useTranslation();
-  const { setFieldValue, values, validateForm } = useFormikContext<NetworkConfigurationValues>();
+  const { setFieldValue, setValues, values } = useFormikContext<NetworkConfigurationValues>();
   const [openConfirmModal, setConfirmModal] = React.useState(false);
 
   const singleStackLabel = allowSingleStackIPv6 ? t('ai:Single stack') : t('ai:IPv4');
@@ -77,34 +77,26 @@ export const StackTypeControlGroup = ({
     !isViewerMode && !isDualStackSelectable && values.stackType === DUAL_STACK;
 
   const setSingleStack = React.useCallback(() => {
-    setFieldValue('stackType', SINGLE_STACK);
-
     const firstNetwork = values.machineNetworks?.[0];
     const isFirstIPv4 = Boolean(firstNetwork?.cidr && Address4.isValid(firstNetwork.cidr));
 
+    const newValues: NetworkConfigurationValues = { ...values, stackType: SINGLE_STACK };
+
     if (values.machineNetworks && values.machineNetworks?.length >= 2) {
-      if (isFirstIPv4) {
-        setFieldValue('machineNetworks', [firstNetwork]);
-      } else {
-        const ipv4Network = values.machineNetworks.find(
-          (network) => network.cidr && Address4.isValid(network.cidr),
-        );
-        if (ipv4Network) {
-          setFieldValue('machineNetworks', [ipv4Network]);
-        } else {
-          setFieldValue('machineNetworks', []);
-        }
-      }
+      const ipv4Network = values.machineNetworks.find(
+        (network) => network.cidr && Address4.isValid(network.cidr),
+      );
+      newValues.machineNetworks = ipv4Network ? [ipv4Network] : [];
     }
 
     if (values.clusterNetworks && values.clusterNetworks.length >= 1) {
-      const defaultCluster =
+      const defaultClusterNetwork =
         defaultNetworkValues.clusterNetworksIpv4 && defaultNetworkValues.clusterNetworksIpv4[0];
       const firstCluster = values.clusterNetworks[0];
-      const ipv4Cluster = defaultCluster
+      const ipv4Cluster = defaultClusterNetwork
         ? {
-            cidr: defaultCluster.cidr,
-            hostPrefix: defaultCluster.hostPrefix,
+            cidr: defaultClusterNetwork.cidr,
+            hostPrefix: defaultClusterNetwork.hostPrefix,
             clusterId: firstCluster.clusterId,
           }
         : {
@@ -112,7 +104,7 @@ export const StackTypeControlGroup = ({
             hostPrefix: '',
             clusterId: clusterId,
           };
-      setFieldValue('clusterNetworks', [ipv4Cluster]);
+      newValues.clusterNetworks = [ipv4Cluster] as ClusterNetwork[];
     }
     if (values.serviceNetworks && values.serviceNetworks.length >= 1) {
       const defaultService =
@@ -127,7 +119,7 @@ export const StackTypeControlGroup = ({
             cidr: '',
             clusterId: clusterId,
           };
-      setFieldValue('serviceNetworks', [ipv4Service]);
+      newValues.serviceNetworks = [ipv4Service];
     }
 
     if (!values.vipDhcpAllocation) {
@@ -142,31 +134,28 @@ export const StackTypeControlGroup = ({
           : [];
       };
 
-      setFieldValue('apiVips', pruneVips(values.apiVips));
-      setFieldValue('ingressVips', pruneVips(values.ingressVips));
+      newValues.apiVips = pruneVips(values.apiVips);
+      newValues.ingressVips = pruneVips(values.ingressVips);
     }
 
-    void validateForm();
+    void setValues(newValues, true);
   }, [
-    setFieldValue,
-    validateForm,
+    setValues,
     clusterId,
     defaultNetworkValues.clusterNetworksIpv4,
     defaultNetworkValues.serviceNetworksIpv4,
-    values.clusterNetworks,
-    values.machineNetworks,
-    values.serviceNetworks,
-    values.apiVips,
-    values.ingressVips,
-    values.vipDhcpAllocation,
+    values,
   ]);
 
-  const setDualStack = () => {
-    setFieldValue('stackType', DUAL_STACK);
-    setFieldValue('vipDhcpAllocation', false);
+  const setDualStack = React.useCallback(() => {
+    const newValues: NetworkConfigurationValues = {
+      ...values,
+      stackType: DUAL_STACK,
+      vipDhcpAllocation: false,
+    };
 
     if (values.networkType === NETWORK_TYPE_SDN) {
-      setFieldValue('networkType', NETWORK_TYPE_OVN);
+      newValues.networkType = NETWORK_TYPE_OVN;
     }
 
     if (values.machineNetworks && values.machineNetworks?.length < 2) {
@@ -176,20 +165,15 @@ export const StackTypeControlGroup = ({
       if (isFirstIPv6) {
         const IPv4Subnets = hostSubnets.filter((subnet) => Address4.isValid(subnet.subnet));
         const cidrIPv4 = IPv4Subnets.length >= 1 ? IPv4Subnets[0].subnet : NO_SUBNET_SET;
-        setFieldValue(
-          'machineNetworks',
-          [
-            { cidr: cidrIPv4, clusterId: clusterId },
-            { cidr: firstNetwork.cidr, clusterId: clusterId },
-          ],
-          false,
-        );
+        newValues.machineNetworks = [
+          { cidr: cidrIPv4, clusterId: clusterId },
+          { cidr: firstNetwork.cidr, clusterId: clusterId },
+        ];
       } else {
-        setFieldValue(
-          'machineNetworks',
-          [...values.machineNetworks, { cidr: cidrIPv6, clusterId: clusterId }],
-          false,
-        );
+        newValues.machineNetworks = [
+          ...values.machineNetworks,
+          { cidr: cidrIPv6, clusterId: clusterId },
+        ];
       }
     }
     if (values.clusterNetworks && values.clusterNetworks?.length < 2) {
@@ -202,7 +186,11 @@ export const StackTypeControlGroup = ({
         hostPrefix: '',
         clusterId: clusterId,
       };
-      setFieldValue('clusterNetworks', [...values.clusterNetworks, secondClusterNetwork], false);
+
+      newValues.clusterNetworks = [
+        ...values.clusterNetworks,
+        secondClusterNetwork,
+      ] as ClusterNetwork[];
     }
     if (values.serviceNetworks && values.serviceNetworks?.length < 2) {
       const firstServiceCidr = values.serviceNetworks[0]?.cidr;
@@ -213,26 +201,31 @@ export const StackTypeControlGroup = ({
         cidr: '',
         clusterId: clusterId,
       };
-      setFieldValue('serviceNetworks', [...values.serviceNetworks, secondServiceNetwork], false);
+      newValues.serviceNetworks = [...values.serviceNetworks, secondServiceNetwork];
     }
     if (values.apiVips && values.apiVips.length < 2) {
-      setFieldValue(
-        'apiVips',
-        [values.apiVips[0] || { ip: '', clusterId: clusterId }, { ip: '', clusterId: clusterId }],
-        false,
-      );
+      newValues.apiVips = [
+        values.apiVips[0] || { ip: '', clusterId: clusterId },
+        { ip: '', clusterId: clusterId },
+      ];
     }
     if (values.ingressVips && values.ingressVips.length < 2) {
-      setFieldValue(
-        'ingressVips',
-        [
-          values.ingressVips[0] || { ip: '', clusterId: clusterId },
-          { ip: '', clusterId: clusterId },
-        ],
-        false,
-      );
+      newValues.ingressVips = [
+        values.ingressVips[0] || { ip: '', clusterId: clusterId },
+        { ip: '', clusterId: clusterId },
+      ];
     }
-  };
+
+    void setValues(newValues, true);
+  }, [
+    cidrIPv6,
+    clusterId,
+    defaultNetworkValues.clusterNetworksDualstack,
+    defaultNetworkValues.serviceNetworksDualstack,
+    hostSubnets,
+    setValues,
+    values,
+  ]);
 
   const primaryCidr = values.machineNetworks?.[0]?.cidr;
 
